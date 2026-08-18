@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Install required tools
         run: |
-          rm -rf /usr/local/bin/node /usr/local/bin/nodejs /usr/local/bin/npm /usr/local/lib/node_modules /usr/local/lib/nodejs
+          sudo rm -rf /usr/local/bin/node /usr/local/bin/nodejs /usr/local/bin/npm /usr/local/lib/node_modules /usr/local/lib/nodejs
           if ! curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg || ! chmod 644 /usr/share/keyrings/nodesource.gpg; then exit 1; fi
           echo 'Types: deb' >> /etc/apt/sources.list.d/nodesource.sources
           echo 'URIs: https://deb.nodesource.com/node_$NODE_VERSION' >> /etc/apt/sources.list.d/nodesource.sources
