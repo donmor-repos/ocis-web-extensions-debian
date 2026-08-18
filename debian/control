@@ -30,3 +30,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud Web json-viewer
 
+Package: ocis-web-app-draw-io
+Architecture: all
+Depends: ocis
+Description: ownCloud web draw.io integration
+
