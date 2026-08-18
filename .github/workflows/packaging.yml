@@ -28,8 +28,10 @@ jobs:
 
       - name: Determine target name and version (ref)
         id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ref=$(for tag in $(gh api --paginate --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases" | \
+          ref=$(for tag in $(gh api --paginate "/repos/owncloud/web-extensions/releases" | \
               jq -r "[.[] | select(.prerelease == false)] | sort_by(.published_at) | .[].tag_name"); do if ! git tag | grep -q "^$tag^"; then echo "${tag}"; break; fi; done)
           if [ -z "${ref}" ]; then
             echo "No missing versions found. Nothing to do."
@@ -39,8 +41,8 @@ jobs:
           echo "ref=${ref}" >> $GITHUB_OUTPUT
           echo "pkg=${ref}" | sed "s/-v.*//" >> $GITHUB_OUTPUT
           echo "ver=${ref}" | sed "s/=.*-v/=/" >> $GITHUB_OUTPUT
-          pd=$(gh api --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".published_at")
-          cd=$(gh api --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".created_at")
+          pd=$(gh api "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".published_at")
+          cd=$(gh api "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".created_at")
           date -d "${pd}" +pub_epoch=%s >> $GITHUB_OUTPUT
           date -d "${cd}" +epoch=%s >> $GITHUB_OUTPUT
           date -d "${pd}" +src_ver=%Y%m%d%H%M%S >> $GITHUB_OUTPUT
