@@ -25,7 +25,7 @@ jobs:
           echo 'Architectures: amd64' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
           echo 'Signed-By: /usr/share/keyrings/nodesource.gpg' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends build-essential debhelper dctrl-tools devscripts apt-utils moreutils
+          sudo apt-get install -y --no-install-recommends build-essential debhelper dctrl-tools devscripts apt-utils moreutils nodejs
 
       - name: Checkout packaging repository
         uses: actions/checkout@v7
