@@ -1,3 +1,9 @@
+ocis-web-extensions (20240913063152-1) resolute; urgency=medium
+
+  * Add unzip-v0.2.0
+
+ -- donmor <donmor3000@hotmail.com>  Tue, 18 Aug 2026 11:57:52 +0000
+
 ocis-web-extensions (20240912121005-1) resolute; urgency=medium
 
   * Add external-sites-v0.2.0

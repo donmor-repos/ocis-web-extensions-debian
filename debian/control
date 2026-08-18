@@ -15,3 +15,8 @@ Architecture: all
 Depends: ocis
 Description: add external sites to the ownCloud Web app menu
 
+Package: ocis-web-app-unzip
+Architecture: all
+Depends: ocis
+Description: ownCloud Web unzip
+
