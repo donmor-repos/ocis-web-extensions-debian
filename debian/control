@@ -20,3 +20,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud Web unzip
 
+Package: ocis-web-app-progress-bars
+Architecture: all
+Depends: ocis
+Description: ownCloud Progress Bars
+
