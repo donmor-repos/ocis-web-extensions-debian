@@ -1,8 +1,8 @@
 # .github/workflows/packaging.yml
 name: Debian Build Bot
 on:
-  # schedule:
-  #   - cron: '0 0 * * *'    
+  schedule:
+    - cron: '0 0 * * *'    
   release:
     types: [published]
   workflow_dispatch:
