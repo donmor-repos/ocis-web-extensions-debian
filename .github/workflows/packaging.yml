@@ -148,7 +148,7 @@ jobs:
         if: steps.version.outputs.ref != ''
         working-directory: download/${{ steps.version.outputs.ref }}
         run: |
-          mv ../../*.deb ../../*.gz ../../*.xz ../../*.dsc ./
+          mv ../../*.deb ../../*.gz ../../*.dsc ./
           apt-ftparchive packages ../../download/${{ steps.version.outputs.ref }} | tee -a Packages
           apt-ftparchive sources ../../download/${{ steps.version.outputs.ref }} | tee -a Sources
           sort-dctrl -k Package,Version:v Packages | sponge Packages
