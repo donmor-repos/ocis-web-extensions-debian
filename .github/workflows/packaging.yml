@@ -39,8 +39,8 @@ jobs:
           fi
           echo "Auto-selected missing package: ${ref}"
           echo "ref=${ref}" >> $GITHUB_OUTPUT
-          echo "pkg=${ref}" | sed "s/-v.*//" >> $GITHUB_OUTPUT
-          echo "ver=${ref}" | sed "s/=.*-v/=/" >> $GITHUB_OUTPUT
+          echo "pkg=${ref}" | sed 's/-v[0-9\.]*$'// >> $GITHUB_OUTPUT
+          echo "ver=${ref}" | sed 's/=.*-v/=/' >> $GITHUB_OUTPUT
           pd=$(gh api "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".published_at")
           cd=$(gh api "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".created_at")
           date -d "${pd}" +pub_epoch=%s >> $GITHUB_OUTPUT
@@ -52,10 +52,10 @@ jobs:
         run: |
           curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -o ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz \
               https://github.com/owncloud/web-extensions/archive/refs/tags/${{ steps.version.outputs.ref }}.tar.gz
-          tar xvf ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|"
-          actual_ver="$(jq -r '.version' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)"
+          tar xvf ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz --transform='s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|'
+          actual_ver=$(jq -r '.version' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)
           if [ "${{ steps.version.outputs.ver }}" != ${actual_ver}" ]; then
-            echo "Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver})"
+            echo 'Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual '"${actual_ver}"')'
             exit 1
           fi
 
@@ -63,13 +63,13 @@ jobs:
         if: steps.version.outputs.ref != ''
         run: |
           if ! grep-dctrl -F Package --exact ocis-web-app-${{ steps.version.outputs.pkg }} debian/control > /dev/null; then
-            echo "Adding new package entry for ocis-web-app-${{ steps.version.outputs.pkg }} ..."
-            echo "Package: ocis-web-app-${{ steps.version.outputs.pkg }}" | tee -a debian/control
-            echo "Architecture: all" | tee -a debian/control
-            echo "Depends: ocis" | tee -a debian/control
-            echo "Description: $(jq -r '.description' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)" | tee -a debian/control
+            echo 'Adding new package entry for ocis-web-app-${{ steps.version.outputs.pkg }} ...'
+            echo 'Package: ocis-web-app-${{ steps.version.outputs.pkg }}' | tee -a debian/control
+            echo 'Architecture: all' | tee -a debian/control
+            echo 'Depends: ocis' | tee -a debian/control
+            echo 'Description: '"$(jq -r '.description' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)" | tee -a debian/control
             echo >> debian/control
-            echo "packages/web-app-${{ steps.version.outputs.pkg }}/dist/* usr/share/ocis/web/assets/apps/${{ steps.version.outputs.pkg }}" > debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
+            echo 'packages/web-app-${{ steps.version.outputs.pkg }}/dist/* usr/share/ocis/web/assets/apps/${{ steps.version.outputs.pkg }}' > debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
           fi
 
       - name: Update debian changelog
