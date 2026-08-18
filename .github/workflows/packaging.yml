@@ -100,24 +100,24 @@ jobs:
           dpkg-buildpackage -v${{ steps.version.outputs.src_ver }}-1 -us -uc -Zgzip
           ls -lha ..
 
-      # - name: Commit changelog
-      #   if: steps.version.outputs.ref != ''
-      #   id: commit
-      #   uses: iarekylew00t/verified-bot-commit@v2
-      #   with:
-      #     message: "add ${{ steps.version.outputs.ref }}"
-      #     files: |
-      #       debian/changelog
-      #       debian/control
-      #       debian/${{ steps.version.outputs.pkg }}.install
+      - name: Commit changelog
+        if: steps.version.outputs.ref != ''
+        id: commit
+        uses: iarekylew00t/verified-bot-commit@v2
+        with:
+          message: "add ${{ steps.version.outputs.ref }}"
+          files: |
+            debian/changelog
+            debian/control
+            debian/${{ steps.version.outputs.pkg }}.install
 
-      # - name: Create and push tag
-      #   if: steps.version.outputs.ref != ''
-      #   uses: rickstaa/action-create-tag@v1
-      #   with:
-      #     tag: "${{ steps.version.outputs.ref }}"
-      #     commit_sha: "${{ steps.commit.outputs.ref }}"
-      #     gpg_private_key: "${{ secrets.GPG_KEY }}"
+      - name: Create and push tag
+        if: steps.version.outputs.ref != ''
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "${{ steps.version.outputs.ref }}"
+          commit_sha: "${{ steps.commit.outputs.ref }}"
+          gpg_private_key: "${{ secrets.GPG_KEY }}"
 
       - name: Get previous Packages
         if: steps.version.outputs.ref != ''
@@ -158,13 +158,13 @@ jobs:
           apt-ftparchive release -o APT::FTPArchive::Release::Date="$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" . | \
               gpg --batch --yes --clearsign --local-user ${{ secrets.GPG_KEY_FINGERPRINT }} --output - | tee InRelease
 
-      # - name: Create release
-      #   if: steps.version.outputs.ref != ''
-      #   uses: softprops/action-gh-release@v3
-      #   with:
-      #     body: "Add ${{ steps.version.outputs.ref }}"
-      #     tag_name: ${{ steps.version.outputs.ref }}
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     make_latest: "true"
-      #     files: |
-      #       download/${{ steps.version.outputs.ref }}/**
+      - name: Create release
+        if: steps.version.outputs.ref != ''
+        uses: softprops/action-gh-release@v3
+        with:
+          body: "Add ${{ steps.version.outputs.ref }}"
+          tag_name: ${{ steps.version.outputs.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          make_latest: "true"
+          files: |
+            download/${{ steps.version.outputs.ref }}/**
