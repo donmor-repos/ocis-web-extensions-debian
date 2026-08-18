@@ -1,0 +1,9 @@
+# Example file for upstream/metadata.
+# See https://wiki.debian.org/UpstreamMetadata for more info/fields.
+# Below an example based on a github project.
+
+Bug-Database: https://github.com/owncloud/web-extensions/issues
+Bug-Submit: https://github.com/owncloud/web-extensions/issues/new
+Documentation: https://doc.owncloud.com/ocis/next/
+Repository-Browse: https://github.com/owncloud/web-extensions
+Repository: https://github.com/owncloud/web-extensions.git

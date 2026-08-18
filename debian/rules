@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+
+ALL_PACKAGES := $(shell dh_listpackages)
+
+ifneq ($(BINARY_PACKAGES),)
+	REQUESTED := $(strip $(BINARY_PACKAGES))
+	SELECTED := $(filter $(ALL_PACKAGES), $(REQUESTED))
+ifeq ($(SELECTED),)
+	$(error Bad package names)
+endif
+else
+	SELECTED := $(ALL_PACKAGES)
+endif
+PKG_NAMES := $(patsubst ocis-%,%,$(SELECTED))
+
+NODE_PATH := /tmp/.node
+NPM_PM := $(shell jq -r '.packageManager')
+export PATH := $(PATH):$(NODE_PATH)/node_modules/.bin
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+	pnpm clean
+	rm -rf node_modules packages/*/dist
+
+override_dh_auto_build:
+	pnpm install --frozen-lockfile
+	pnpm run build $(foreach pkg,$(PKG_NAMES),--filter=$(pkg))
+
+override_dh_auto_test:
+
+override_dh_binary:
+ifeq ($(SELECTED),$(ALL_PACKAGES))
+	dh binary
+else
+	dh binary --before dh_install
+	for pkg in $(SELECTED); do dh binary --after dh_install -p$$pkg; done
+endif
+
+override_dh_gencontrol:
+	pkg=$$(echo '$(DH_INTERNAL_OPTIONS)' | sed 's/.*-p\([^ ]*\).*/\1/'); \
+	    subpkg=$${pkg#ocis-}; \
+	    version=$$(jq -r '.version' packages/$${subpkg}/package.json); \
+	    dh_gencontrol -p$$pkg -v$${version#web-app-}-1
+
+
+execute_before_dh_auto_build:
+	mkdir -p $(NODE_PATH)
+	npm --prefix=$(NODE_PATH) install $(NPM_PM)
+

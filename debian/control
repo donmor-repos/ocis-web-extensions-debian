@@ -1,0 +1,12 @@
+Source: ocis-web-extensions
+Section: net
+Priority: optional
+Maintainer: donmor <donmor3000@hotmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13), nodejs:native (>= 18), npm, jq
+Standards-Version: 4.7.2
+Homepage: https://github.com/owncloud/web-extensions
+#Vcs-Browser: https://salsa.debian.org/debian/web-extensions
+#Vcs-Git: https://salsa.debian.org/debian/web-extensions.git
+
