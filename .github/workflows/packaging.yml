@@ -19,7 +19,7 @@ jobs:
           sudo rm -rf /usr/local/bin/node /usr/local/bin/nodejs /usr/local/bin/npm /usr/local/lib/node_modules /usr/local/lib/nodejs
           if ! curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg || ! sudo chmod 644 /usr/share/keyrings/nodesource.gpg; then exit 1; fi
           echo 'Types: deb' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'URIs: https://deb.nodesource.com/node_$NODE_VERSION' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'URIs: https://deb.nodesource.com/node_24.x' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
           echo 'Suites: nodistro' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
           echo 'Components: main' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
           echo 'Architectures: amd64' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
