@@ -40,3 +40,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud Cast Integration
 
+Package: ocis-web-app-importer
+Architecture: all
+Depends: ocis
+Description: ownCloud Web importer
+
