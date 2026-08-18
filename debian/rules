@@ -2,14 +2,13 @@
 
 ALL_PACKAGES := $(shell dh_listpackages)
 
-ifneq ($(BINARY_PACKAGES),)
-	REQUESTED := $(strip $(BINARY_PACKAGES))
-	SELECTED := $(filter $(ALL_PACKAGES), $(REQUESTED))
-ifeq ($(SELECTED),)
-	$(error Bad package names)
-endif
-else
+ifeq ($(strip $(BINARY_PACKAGES)),)
 	SELECTED := $(ALL_PACKAGES)
+else
+	SELECTED := $(filter $(REQUESTED), $(ALL_PACKAGES))
+	ifeq ($(SELECTED),)
+		$(error Bad package names)
+	endif
 endif
 PKG_NAMES := $(patsubst ocis-%,%,$(SELECTED))
 
