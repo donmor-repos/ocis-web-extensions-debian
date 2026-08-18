@@ -50,10 +50,10 @@ jobs:
       - name: Prepare source
         if: steps.version.outputs.ref != ''
         run: |
-          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -o ocis-web-extensions_${{ needs.version.outputs.src_ver }}.orig.tar.gz \
-              https://github.com/owncloud/web-extensions/archive/refs/tags/${{ needs.version.outputs.ref }}.tar.gz
-          tar xvf ocis-web-extensions_${{ needs.version.outputs.ocis }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ needs.version.outputs.src_ver }}|"
-          actual_ver="$(jq -r '.version' ocis-web-extensions-${{ needs.version.outputs.src_ver }}/packages/web-app-${{ needs.version.outputs.pkg }}/package.json)"
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -o ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz \
+              https://github.com/owncloud/web-extensions/archive/refs/tags/${{ steps.version.outputs.ref }}.tar.gz
+          tar xvf ocis-web-extensions_${{ steps.version.outputs.ocis }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|"
+          actual_ver="$(jq -r '.version' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)"
           if [ "${{ steps.version.outputs.ver }}" != ${actual_ver}" ]; then
             echo "Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver})"
             exit 1
@@ -67,7 +67,7 @@ jobs:
             echo "Package: ocis-web-app-${{ steps.version.outputs.pkg }}" | tee -a debian/control
             echo "Architecture: all" | tee -a debian/control
             echo "Depends: ocis" | tee -a debian/control
-            echo "Description: $(jq -r '.description' ocis-web-extensions-${{ needs.version.outputs.src_ver }}/packages/web-app-${{ needs.version.outputs.pkg }}/package.json)" | tee -a debian/control
+            echo "Description: $(jq -r '.description' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)" | tee -a debian/control
             echo >> debian/control
             echo "packages/web-app-${{ steps.version.outputs.pkg }}/dist/* usr/share/ocis/web/assets/apps/${{ steps.version.outputs.pkg }}" > debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
           fi
@@ -78,18 +78,18 @@ jobs:
           DEBFULLNAME: donmor
           DEBEMAIL: donmor3000@hotmail.com
         run: |
-          dch -v ${{ needs.version.outputs.src_ver }}-1 --date "$(date -u -R -d '@${{ needs.version.outputs.pub_epoch }}')" -b "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
+          dch -v ${{ steps.version.outputs.src_ver }}-1 --date "$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" -b "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
           dch -r ocis-web-extensions
 
       - name: Build packages
         if: steps.version.outputs.ref != ''
-        working-directory: ocis-web-extensions-${{ needs.version.outputs.src_ver }}
+        working-directory: ocis-web-extensions-${{ steps.version.outputs.src_ver }}
         env:
-          BINARY_PACKAGES: ${{ needs.version.outputs.pkg }}
-          SOURCE_DATE_EPOCH: ${{ needs.version.outputs.epoch }}
+          BINARY_PACKAGES: ${{ steps.version.outputs.pkg }}
+          SOURCE_DATE_EPOCH: ${{ steps.version.outputs.epoch }}
         run: |
           cp -a ../debian ./
-          dpkg-buildpackage -v${{ needs.version.outputs.ocis }}-1 -us -uc -Zgzip
+          dpkg-buildpackage -v${{ steps.version.outputs.ocis }}-1 -us -uc -Zgzip
           ls -lha ..
 
       - name: Commit changelog
@@ -101,7 +101,7 @@ jobs:
           files: |
             debian/changelog
             debian/control
-            debian/${{ needs.version.outputs.pkg }}.install
+            debian/${{ steps.version.outputs.pkg }}.install
 
       - name: Create and push tag
         if: steps.version.outputs.ref != ''
@@ -147,7 +147,7 @@ jobs:
           sort-dctrl -k Source,Version:v Sources | sponge Sources
           apt-ftparchive release . > Release
           echo "${{ secrets.GPG_KEY }}" | gpg --batch --import
-          apt-ftparchive release -o APT::FTPArchive::Release::Date="$(date -u -R -d '@${{ needs.version.outputs.pub_epoch }}')" . | \
+          apt-ftparchive release -o APT::FTPArchive::Release::Date="$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" . | \
               gpg --batch --yes --clearsign --local-user ${{ secrets.GPG_KEY_FINGERPRINT }} --output - | tee InRelease
 
       - name: Create release
