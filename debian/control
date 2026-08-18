@@ -35,3 +35,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud web draw.io integration
 
+Package: ocis-web-app-cast
+Architecture: all
+Depends: ocis
+Description: ownCloud Cast Integration
+
