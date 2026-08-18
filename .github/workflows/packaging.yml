@@ -20,7 +20,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends dctrl-tools devscripts apt-utils moreutils
 
       - name: Checkout packaging repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -55,7 +55,7 @@ jobs:
           tar xvf ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|"
           actual_ver="$(jq -r '.version' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)"
           if [ "${{ steps.version.outputs.ver }}" != ${actual_ver}" ]; then
-            echo "Error\: source version mismatch\: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver)"
+            echo "Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver})"
             exit 1
           fi
 
