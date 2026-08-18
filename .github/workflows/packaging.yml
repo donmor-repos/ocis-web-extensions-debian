@@ -52,7 +52,7 @@ jobs:
         run: |
           curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -o ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz \
               https://github.com/owncloud/web-extensions/archive/refs/tags/${{ steps.version.outputs.ref }}.tar.gz
-          tar xvf ocis-web-extensions_${{ steps.version.outputs.ocis }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|"
+          tar xvf ocis-web-extensions_${{ steps.version.outputs.src_ver }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ steps.version.outputs.src_ver }}|"
           actual_ver="$(jq -r '.version' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)"
           if [ "${{ steps.version.outputs.ver }}" != ${actual_ver}" ]; then
             echo "Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver})"
@@ -89,7 +89,7 @@ jobs:
           SOURCE_DATE_EPOCH: ${{ steps.version.outputs.epoch }}
         run: |
           cp -a ../debian ./
-          dpkg-buildpackage -v${{ steps.version.outputs.ocis }}-1 -us -uc -Zgzip
+          dpkg-buildpackage -v${{ steps.version.outputs.src_ver }}-1 -us -uc -Zgzip
           ls -lha ..
 
       - name: Commit changelog
