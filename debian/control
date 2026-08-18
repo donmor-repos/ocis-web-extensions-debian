@@ -25,3 +25,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud Progress Bars
 
+Package: ocis-web-app-json-viewer
+Architecture: all
+Depends: ocis
+Description: ownCloud Web json-viewer
+
