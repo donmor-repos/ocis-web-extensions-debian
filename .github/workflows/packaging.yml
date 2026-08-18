@@ -86,7 +86,7 @@ jobs:
           DEBFULLNAME: donmor
           DEBEMAIL: donmor3000@hotmail.com
         run: |
-          dch -v ${{ steps.version.outputs.src_ver }}-1 --date "$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" -b "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
+          dch -v ${{ steps.version.outputs.src_ver }}-1 --date "$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" -b "Add ${{ steps.version.outputs.ref }}"
           dch -r ocis-web-extensions
 
       - name: Build packages
@@ -94,7 +94,7 @@ jobs:
         working-directory: ocis-web-extensions-${{ steps.version.outputs.src_ver }}
         env:
           SOURCE_DATE_EPOCH: ${{ steps.version.outputs.epoch }}
-          # BINARY_PACKAGES: ${{ steps.version.outputs.pkg }}
+          BINARY_PACKAGES: ocis-web-app-${{ steps.version.outputs.pkg }}
         run: |
           cp -a ../debian ./
           dpkg-buildpackage -v${{ steps.version.outputs.src_ver }}-1 -us -uc -Zgzip
@@ -162,7 +162,7 @@ jobs:
       #   if: steps.version.outputs.ref != ''
       #   uses: softprops/action-gh-release@v3
       #   with:
-      #     body: "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
+      #     body: "Add ${{ steps.version.outputs.ref }}"
       #     tag_name: ${{ steps.version.outputs.ref }}
       #     token: ${{ secrets.GITHUB_TOKEN }}
       #     make_latest: "true"

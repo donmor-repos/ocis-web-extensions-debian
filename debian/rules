@@ -5,43 +5,49 @@ ALL_PACKAGES := $(shell dh_listpackages)
 ifeq ($(strip $(BINARY_PACKAGES)),)
 	SELECTED := $(ALL_PACKAGES)
 else
-	SELECTED := $(filter $(REQUESTED), $(ALL_PACKAGES))
+	SELECTED := $(filter $(BINARY_PACKAGES), $(ALL_PACKAGES))
 	ifeq ($(SELECTED),)
 		$(error Bad package names)
 	endif
 endif
-PKG_NAMES := $(patsubst ocis-%,%,$(SELECTED))
+PNPM_FILTER := --filter=web-extensions $(foreach pkg,$(patsubst ocis-%,%,$(SELECTED)),--filter=$(shell jq -r '.name' packages/$(pkg)/package.json))
 
 NODE_PATH := /tmp/.node
-NPM_PM := $(shell jq -r '.packageManager')
+NPM_PM := $(shell jq -r '.packageManager' package.json)
 export PATH := $(PATH):$(NODE_PATH)/node_modules/.bin
 
 %:
 	dh $@
 
 override_dh_auto_clean:
-	rm -rf node_modules packages/*/dist
+	rm -rf node_modules packages/*/node_modules packages/*/dist $(NODE_PATH)
 
 override_dh_auto_build:
-	pnpm install --frozen-lockfile
-	pnpm run build $(foreach pkg,$(PKG_NAMES),--filter=$(pkg))
+	pnpm $(PNPM_FILTER) install --frozen-lockfile
+	pnpm $(PNPM_FILTER) run build
 
 override_dh_auto_test:
 
-override_dh_binary:
-ifeq ($(SELECTED),$(ALL_PACKAGES))
-	dh binary
-else
-	dh binary --before dh_install
-	for pkg in $(SELECTED); do dh binary --after dh_install -p$$pkg; done
-endif
+override_dh_install:
+	dh_install $(foreach pkg,$(SELECTED),-p$(pkg))
+
+override_dh_installdocs:
+	dh_installdocs $(foreach pkg,$(SELECTED),-p$(pkg))
+
+override_dh_installchangelogs:
+	dh_installchangelogs $(foreach pkg,$(SELECTED),-p$(pkg))
+
+override_dh_installdeb:
+	dh_installdeb $(foreach pkg,$(SELECTED),-p$(pkg))
 
 override_dh_gencontrol:
-	pkg=$$(echo '$(DH_INTERNAL_OPTIONS)' | sed 's/.*-p\([^ ]*\).*/\1/'); \
-	    subpkg=$${pkg#ocis-}; \
-	    version=$$(jq -r '.version' packages/$${subpkg}/package.json); \
-	    dh_gencontrol -p$$pkg -v$${version#web-app-}-1
+	for pkg in $(SELECTED); do dh_gencontrol -p$$pkg -- -v$$(jq -r '.version' packages/$${pkg#ocis-}/package.json)-1; done
 
+override_dh_md5sums:
+	dh_md5sums $(foreach pkg,$(SELECTED),-p$(pkg))
+
+override_dh_builddeb:
+	dh_builddeb $(foreach pkg,$(SELECTED),-p$(pkg))
 
 execute_before_dh_auto_build:
 	mkdir -p $(NODE_PATH)
