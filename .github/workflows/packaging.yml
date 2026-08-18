@@ -1,0 +1,162 @@
+# .github/workflows/packaging.yml
+name: Debian Build Bot
+on:
+  # schedule:
+  #   - cron: '0 0 * * *'    
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Install required tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends dctrl-tools devscripts apt-utils moreutils
+
+      - name: Checkout packaging repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Determine target name and version (ref)
+        id: version
+        run: |
+          LOCAL_TAGS=$(git tag)
+          UPSTREAM_TAGS=$(gh api --paginate --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases" | \
+              jq -r "[.[] | select(.prerelease == false)] | sort_by(.published_at) | .[].tag_name")
+          ref=$(for tag in ${UPSTREAM_TAGS}; do if ! echo "${LOCAL_TAGS}" | grep -q "^$tag^"; then echo "${tag}"; break; fi; done)
+          if [ -z "${ref}" ]; then
+            echo "No missing versions found. Nothing to do."
+            exit 0
+          fi
+          echo "Auto-selected missing version: $REF"
+          echo "ref=${ref}" >> $GITHUB_OUTPUT
+          echo "pkg=${ref}" | sed "s/-v.*//" >> $GITHUB_OUTPUT
+          echo "ver=${ref}" | sed "s/=.*-v/=/" >> $GITHUB_OUTPUT
+          pd=$(gh api --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".published_at")
+          cd=$(gh api --token "${{ secrets.GITHUB_TOKEN }}" "/repos/owncloud/web-extensions/releases/tags/${ref}" | jq -r ".created_at")
+          date -d "${pd}" +pub_epoch=%s >> $GITHUB_OUTPUT
+          date -d "${cd}" +epoch=%s >> $GITHUB_OUTPUT
+          date -d "${pd}" +src_ver=%Y%m%d%H%M%S >> $GITHUB_OUTPUT
+
+      - name: Prepare source
+        if: steps.version.outputs.ref != ''
+        run: |
+          curl -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -o ocis-web-extensions_${{ needs.version.outputs.src_ver }}.orig.tar.gz \
+              https://github.com/owncloud/web-extensions/archive/refs/tags/${{ needs.version.outputs.ref }}.tar.gz
+          tar xvf ocis-web-extensions_${{ needs.version.outputs.ocis }}.orig.tar.gz --transform="s|^[^/]*|ocis-web-extensions-${{ needs.version.outputs.src_ver }}|"
+          actual_ver="$(jq -r '.version' ocis-web-extensions-${{ needs.version.outputs.src_ver }}/packages/web-app-${{ needs.version.outputs.pkg }}/package.json)"
+          if [ "${{ steps.version.outputs.ver }}" != ${actual_ver}" ]; then
+            echo "Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual ${actual_ver})"
+            exit 1
+          fi
+
+      - name: Update debian/control if needed (add missing package)
+        if: steps.version.outputs.ref != ''
+        run: |
+          if ! grep-dctrl -F Package --exact ocis-web-app-${{ steps.version.outputs.pkg }} debian/control > /dev/null; then
+            echo "Adding new package entry for ocis-web-app-${{ steps.version.outputs.pkg }} ..."
+            echo "Package: ocis-web-app-${{ steps.version.outputs.pkg }}" | tee -a debian/control
+            echo "Architecture: all" | tee -a debian/control
+            echo "Depends: ocis" | tee -a debian/control
+            echo "Description: $(jq -r '.description' ocis-web-extensions-${{ needs.version.outputs.src_ver }}/packages/web-app-${{ needs.version.outputs.pkg }}/package.json)" | tee -a debian/control
+            echo >> debian/control
+            echo "packages/web-app-${{ steps.version.outputs.pkg }}/dist/* usr/share/ocis/web/assets/apps/${{ steps.version.outputs.pkg }}" > debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
+          fi
+
+      - name: Update debian changelog
+        if: steps.version.outputs.ref != ''
+        env:
+          DEBFULLNAME: donmor
+          DEBEMAIL: donmor3000@hotmail.com
+        run: |
+          dch -v ${{ needs.version.outputs.src_ver }}-1 --date "$(date -u -R -d '@${{ needs.version.outputs.pub_epoch }}')" -b "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
+          dch -r ocis-web-extensions
+
+      - name: Build packages
+        if: steps.version.outputs.ref != ''
+        working-directory: ocis-web-extensions-${{ needs.version.outputs.src_ver }}
+        env:
+          BINARY_PACKAGES: ${{ needs.version.outputs.pkg }}
+          SOURCE_DATE_EPOCH: ${{ needs.version.outputs.epoch }}
+        run: |
+          cp -a ../debian ./
+          dpkg-buildpackage -v${{ needs.version.outputs.ocis }}-1 -us -uc -Zgzip
+          ls -lha ..
+
+      - name: Commit changelog
+        if: steps.version.outputs.ref != ''
+        id: commit
+        uses: iarekylew00t/verified-bot-commit@v2
+        with:
+          message: "add ${{ steps.version.outputs.ref }}"
+          files: |
+            debian/changelog
+            debian/control
+            debian/${{ needs.version.outputs.pkg }}.install
+
+      - name: Create and push tag
+        if: steps.version.outputs.ref != ''
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "${{ steps.version.outputs.ref }}"
+          commit_sha: "${{ steps.commit.outputs.ref }}"
+          gpg_private_key: "${{ secrets.GPG_KEY }}"
+
+      - name: Get previous Packages
+        if: steps.version.outputs.ref != ''
+        continue-on-error: true
+        uses: robinraju/release-downloader@v1
+        with:
+          latest: true
+          out-file-path: download/${{ steps.version.outputs.ref }}
+          fileName: 'Packages'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get previous Sources
+        if: steps.version.outputs.ref != ''
+        continue-on-error: true
+        uses: robinraju/release-downloader@v1
+        with:
+          latest: true
+          out-file-path: download/${{ steps.version.outputs.ref }}
+          fileName: 'Sources'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create upload dir
+        if: steps.version.outputs.ref != ''
+        run: |
+          mkdir -p download/${{ steps.version.outputs.ref }}
+
+      - name: Create repo
+        if: steps.version.outputs.ref != ''
+        working-directory: download/${{ steps.version.outputs.ref }}
+        run: |
+          mv ../../*.deb ../../*.gz ../../*.xz ../../*.dsc ./
+          apt-ftparchive packages ../../download/${{ steps.version.outputs.ref }} | tee -a Packages
+          apt-ftparchive sources ../../download/${{ steps.version.outputs.ref }} | tee -a Sources
+          sort-dctrl -k Package,Version:v Packages | sponge Packages
+          sort-dctrl -k Source,Version:v Sources | sponge Sources
+          apt-ftparchive release . > Release
+          echo "${{ secrets.GPG_KEY }}" | gpg --batch --import
+          apt-ftparchive release -o APT::FTPArchive::Release::Date="$(date -u -R -d '@${{ needs.version.outputs.pub_epoch }}')" . | \
+              gpg --batch --yes --clearsign --local-user ${{ secrets.GPG_KEY_FINGERPRINT }} --output - | tee InRelease
+
+      - name: Create release
+        if: steps.version.outputs.ref != ''
+        uses: softprops/action-gh-release@v3
+        with:
+          body: "Bump ${{ steps.version.outputs.pkg }} to ${{ steps.version.outputs.ver }}"
+          tag_name: ${{ steps.version.outputs.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          make_latest: "true"
+          files: |
+            download/${{ steps.version.outputs.ref }}/**
