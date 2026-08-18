@@ -98,7 +98,6 @@ jobs:
         run: |
           cp -a ../debian ./
           dpkg-buildpackage -v${{ steps.version.outputs.src_ver }}-1 -us -uc -Zgzip
-          ls -lha ..
 
       - name: Commit changelog
         if: steps.version.outputs.ref != ''
@@ -109,7 +108,7 @@ jobs:
           files: |
             debian/changelog
             debian/control
-            debian/${{ steps.version.outputs.pkg }}.install
+            debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
 
       - name: Create and push tag
         if: steps.version.outputs.ref != ''
