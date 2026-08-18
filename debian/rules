@@ -21,7 +21,6 @@ export PATH := $(PATH):$(NODE_PATH)/node_modules/.bin
 	dh $@
 
 override_dh_auto_clean:
-	pnpm clean
 	rm -rf node_modules packages/*/dist
 
 override_dh_auto_build:
