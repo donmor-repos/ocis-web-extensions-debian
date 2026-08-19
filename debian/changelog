@@ -1,3 +1,9 @@
+ocis-web-extensions (20251006092025-1) resolute; urgency=medium
+
+  * Add cast-v0.3.2
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 01:03:30 +0000
+
 ocis-web-extensions (20250620091827-1) resolute; urgency=medium
 
   * Add json-viewer-v0.3.1
