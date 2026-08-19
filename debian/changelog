@@ -1,3 +1,9 @@
+ocis-web-extensions (20251006092134-1) resolute; urgency=medium
+
+  * Add progress-bars-v0.3.2
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 01:53:13 +0000
+
 ocis-web-extensions (20251006092115-1) resolute; urgency=medium
 
   * Add importer-v0.3.1
