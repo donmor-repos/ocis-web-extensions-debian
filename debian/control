@@ -55,3 +55,8 @@ Architecture: all
 Depends: ocis
 Description: Advanced search extension for ownCloud with photo EXIF metadata filters
 
+Package: ocis-web-app-ai-doc-summary
+Architecture: all
+Depends: ocis
+Description: AI Document Summarizer Sidebar - sidebarPanel + quick-action extension
+
