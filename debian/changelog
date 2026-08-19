@@ -1,3 +1,9 @@
+ocis-web-extensions (20260615130218-1) resolute; urgency=medium
+
+  * Add advanced-search-v0.3.1
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 08:16:17 +0000
+
 ocis-web-extensions (20260519065207-1) resolute; urgency=medium
 
   * Add photo-addon-v0.3.0
