@@ -152,7 +152,6 @@ jobs:
           apt-ftparchive sources ../../download/${{ steps.version.outputs.ref }} | tee -a Sources
           sort-dctrl -k Package,Version:v Packages | sponge Packages
           sort-dctrl -k Source,Version:v Sources | sponge Sources
-          apt-ftparchive release . > Release
           echo "${{ secrets.GPG_KEY }}" | gpg --batch --import
           apt-ftparchive release -o APT::FTPArchive::Release::Date="$(date -u -R -d '@${{ steps.version.outputs.pub_epoch }}')" . | \
               gpg --batch --yes --clearsign --local-user ${{ secrets.GPG_KEY_FINGERPRINT }} --output - | tee InRelease
