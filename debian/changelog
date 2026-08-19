@@ -1,3 +1,9 @@
+ocis-web-extensions (20260519065207-1) resolute; urgency=medium
+
+  * Add photo-addon-v0.3.0
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 08:06:05 +0000
+
 ocis-web-extensions (20260519065154-1) resolute; urgency=medium
 
   * Add unzip-v0.5.0
