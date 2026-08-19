@@ -1,3 +1,9 @@
+ocis-web-extensions (20260618161641-1) resolute; urgency=medium
+
+  * Add chat-with-file-v0.1.0
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 10:14:59 +0000
+
 ocis-web-extensions (20260618161626-1) resolute; urgency=medium
 
   * Add ai-doc-summary-v0.1.0

@@ -60,3 +60,8 @@ Architecture: all
 Depends: ocis
 Description: AI Document Summarizer Sidebar - sidebarPanel + quick-action extension
 
+Package: ocis-web-app-chat-with-file
+Architecture: all
+Depends: ocis
+Description: Chat with an LLM using a specific file as context.
+
