@@ -50,3 +50,8 @@ Architecture: all
 Depends: ocis
 Description: Photo gallery extension for ownCloud with timeline view, EXIF metadata, and map display
 
+Package: ocis-web-app-advanced-search
+Architecture: all
+Depends: ocis
+Description: Advanced search extension for ownCloud with photo EXIF metadata filters
+
