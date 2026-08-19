@@ -45,3 +45,8 @@ Architecture: all
 Depends: ocis
 Description: ownCloud Web importer
 
+Package: ocis-web-app-photo-addon
+Architecture: all
+Depends: ocis
+Description: Photo gallery extension for ownCloud with timeline view, EXIF metadata, and map display
+
