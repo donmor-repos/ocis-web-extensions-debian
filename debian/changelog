@@ -1,3 +1,9 @@
+ocis-web-extensions (20250620091608-1) resolute; urgency=medium
+
+  * Add draw-io-v0.3.1
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 00:10:11 +0000
+
 ocis-web-extensions (20250620091601-1) resolute; urgency=medium
 
   * Add unzip-v0.4.1
