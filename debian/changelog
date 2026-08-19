@@ -1,3 +1,9 @@
+ocis-web-extensions (20260615130450-1) resolute; urgency=medium
+
+  * Add importer-v0.4.1
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 09:20:55 +0000
+
 ocis-web-extensions (20260615130444-1) resolute; urgency=medium
 
   * Add photo-addon-v0.3.1
