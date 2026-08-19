@@ -1,3 +1,9 @@
+ocis-web-extensions (20260519064829-1) resolute; urgency=medium
+
+  * Add external-sites-v0.4.0
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 06:51:55 +0000
+
 ocis-web-extensions (20260519064828-1) resolute; urgency=medium
 
   * Add importer-v0.4.0
