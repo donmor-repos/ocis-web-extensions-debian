@@ -1,3 +1,9 @@
+ocis-web-extensions (20260615130352-1) resolute; urgency=medium
+
+  * Add cast-v0.4.1
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 08:27:00 +0000
+
 ocis-web-extensions (20260615130218-1) resolute; urgency=medium
 
   * Add advanced-search-v0.3.1
