@@ -1,3 +1,9 @@
+ocis-web-extensions (20260203101529-1) resolute; urgency=medium
+
+  * Add draw-io-v0.3.3
+
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 02:42:20 +0000
+
 ocis-web-extensions (20260203101050-1) resolute; urgency=medium
 
   * Add cast-v0.3.3
