@@ -1,8 +1,8 @@
-ocis-web-extensions (20251006092050-1) resolute; urgency=medium
+ocis-web-extensions (20251006092115-1) resolute; urgency=medium
 
-  * Add draw-io-v0.3.2
+  * Add importer-v0.3.1
 
- -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 01:39:48 +0000
+ -- donmor <donmor3000@hotmail.com>  Wed, 19 Aug 2026 01:42:16 +0000
 
 ocis-web-extensions (20251006092026-1) resolute; urgency=medium
 
