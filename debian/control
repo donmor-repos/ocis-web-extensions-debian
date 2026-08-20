@@ -75,3 +75,8 @@ Architecture: all
 Depends: ocis
 Description: AI Folder Brief Sidebar — sidebarPanel extension that summarises folder contents
 
+Package: ocis-web-app-ai-sensitive-data-scanner
+Architecture: all
+Depends: ocis
+Description: AI Sensitive Data Scanner (Batch) — batch-action extension for scanning files for PII, credentials, and confidential text
+

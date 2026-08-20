@@ -1,3 +1,9 @@
+ocis-web-extensions (20260629170946-1) resolute; urgency=medium
+
+  * Add ai-sensitive-data-scanner-v0.1.0
+
+ -- donmor <donmor3000@hotmail.com>  Thu, 20 Aug 2026 00:35:06 +0000
+
 ocis-web-extensions (20260629170936-1) resolute; urgency=medium
 
   * Add ai-folder-brief-sidebar-v0.1.0
