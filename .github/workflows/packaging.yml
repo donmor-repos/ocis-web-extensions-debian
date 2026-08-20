@@ -14,19 +14,6 @@ jobs:
       contents: write
 
     steps:
-      - name: Install required tools
-        run: |
-          sudo rm -rf /usr/local/bin/node /usr/local/bin/nodejs /usr/local/bin/npm /usr/local/lib/node_modules /usr/local/lib/nodejs
-          if ! curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg || ! sudo chmod 644 /usr/share/keyrings/nodesource.gpg; then exit 1; fi
-          echo 'Types: deb' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'URIs: https://deb.nodesource.com/node_24.x' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'Suites: nodistro' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'Components: main' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'Architectures: amd64' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          echo 'Signed-By: /usr/share/keyrings/nodesource.gpg' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends build-essential debhelper dctrl-tools devscripts apt-utils moreutils nodejs
-
       - name: Checkout packaging repository
         uses: actions/checkout@v7
         with:
@@ -66,6 +53,19 @@ jobs:
             echo 'Error: source version mismatch: ${{ steps.version.outputs.pkg }} (expects ${{ steps.version.outputs.ver }}, actual '"${actual_ver}"')'
             exit 1
           fi
+
+      - name: Install required tools
+        run: |
+          sudo rm -rf /usr/local/bin/node /usr/local/bin/nodejs /usr/local/bin/npm /usr/local/lib/node_modules /usr/local/lib/nodejs
+          if ! curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg || ! sudo chmod 644 /usr/share/keyrings/nodesource.gpg; then exit 1; fi
+          echo 'Types: deb' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'URIs: https://deb.nodesource.com/node_24.x' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'Suites: nodistro' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'Components: main' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'Architectures: amd64' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          echo 'Signed-By: /usr/share/keyrings/nodesource.gpg' | sudo tee -a /etc/apt/sources.list.d/nodesource.sources
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential debhelper dctrl-tools devscripts apt-utils moreutils nodejs
 
       - name: Update debian/control if needed (add missing package)
         if: steps.version.outputs.ref != ''
