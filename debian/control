@@ -70,3 +70,8 @@ Architecture: all
 Depends: ocis
 Description: AI Image Alt-Text Generator — sidebarPanel + context-action extension
 
+Package: ocis-web-app-ai-folder-brief-sidebar
+Architecture: all
+Depends: ocis
+Description: AI Folder Brief Sidebar — sidebarPanel extension that summarises folder contents
+
