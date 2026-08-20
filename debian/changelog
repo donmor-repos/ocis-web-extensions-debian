@@ -1,3 +1,9 @@
+ocis-web-extensions (20260629171010-1) resolute; urgency=medium
+
+  * Add ai-data-insights-sidebar-v0.1.0
+
+ -- donmor <donmor3000@hotmail.com>  Thu, 20 Aug 2026 01:06:42 +0000
+
 ocis-web-extensions (20260629170956-1) resolute; urgency=medium
 
   * Add group-management-v0.1.0
