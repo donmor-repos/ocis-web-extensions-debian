@@ -85,3 +85,8 @@ Architecture: all
 Depends: ocis
 Description: Markdown file comments stored in oCIS WebDAV metadata
 
+Package: ocis-web-app-group-management
+Architecture: all
+Depends: ocis
+Description: Group management full-app extension for ownCloud Web
+
