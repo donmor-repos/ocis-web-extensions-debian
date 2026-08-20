@@ -65,3 +65,8 @@ Architecture: all
 Depends: ocis
 Description: Chat with an LLM using a specific file as context.
 
+Package: ocis-web-app-ai-image-alt-text-sidebar
+Architecture: all
+Depends: ocis
+Description: AI Image Alt-Text Generator — sidebarPanel + context-action extension
+

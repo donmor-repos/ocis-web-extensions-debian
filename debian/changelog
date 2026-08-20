@@ -1,3 +1,9 @@
+ocis-web-extensions (20260625113446-1) resolute; urgency=medium
+
+  * Add ai-image-alt-text-sidebar-v0.1.0
+
+ -- donmor <donmor3000@hotmail.com>  Thu, 20 Aug 2026 00:28:17 +0000
+
 ocis-web-extensions (20260618161641-1) resolute; urgency=medium
 
   * Add chat-with-file-v0.1.0
