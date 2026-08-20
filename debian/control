@@ -80,3 +80,8 @@ Architecture: all
 Depends: ocis
 Description: AI Sensitive Data Scanner (Batch) — batch-action extension for scanning files for PII, credentials, and confidential text
 
+Package: ocis-web-app-file-comments
+Architecture: all
+Depends: ocis
+Description: Markdown file comments stored in oCIS WebDAV metadata
+
