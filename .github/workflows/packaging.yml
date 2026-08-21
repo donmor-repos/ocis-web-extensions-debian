@@ -69,13 +69,22 @@ jobs:
           sudo apt-get install -y --no-install-recommends build-essential debhelper dctrl-tools devscripts apt-utils moreutils nodejs
 
       - name: Update debian/control if needed (add missing package)
+        id: gencontrol
         if: steps.version.outputs.ref != ''
         run: |
           if ! grep-dctrl -F Package --exact ocis-web-app-${{ steps.version.outputs.pkg }} debian/control > /dev/null; then
             echo 'Adding new package entry for ocis-web-app-${{ steps.version.outputs.pkg }} ...'
             echo 'Package: ocis-web-app-${{ steps.version.outputs.pkg }}' | tee -a debian/control
             echo 'Architecture: all' | tee -a debian/control
-            echo 'Depends: ocis' | tee -a debian/control
+            if [ -f "packages/${{ steps.version.outputs.pkg }}/src/composables/useLlm.ts" -o -f "packages/${{ steps.version.outputs.pkg }}/src/composables/useLLM.ts" ]; then
+              echo 'Depends: ocis, ocis-ai-llm-proxy' | tee -a debian/control
+              if ! curl -s -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://github.com/${{ github.repository }}/release/latest/download/Packages | \
+                  grep-dctrl -F Package "ocis-ai-llm-proxy" --and -F Version --exact $(jq -r '.version' packages/ai-llm-proxy/package.json)-1 >/dev/null; then
+                echo "pkg=ocis-ai-llm-proxy" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo 'Depends: ocis' | tee -a debian/control
+            fi
             echo 'Description: '"$(jq -r '.description' ocis-web-extensions-${{ steps.version.outputs.src_ver }}/packages/web-app-${{ steps.version.outputs.pkg }}/package.json)" | tee -a debian/control
             echo >> debian/control
             echo 'packages/web-app-${{ steps.version.outputs.pkg }}/dist/* usr/share/ocis/web/assets/apps/${{ steps.version.outputs.pkg }}' > debian/ocis-web-app-${{ steps.version.outputs.pkg }}.install
@@ -95,7 +104,7 @@ jobs:
         working-directory: ocis-web-extensions-${{ steps.version.outputs.src_ver }}
         env:
           SOURCE_DATE_EPOCH: ${{ steps.version.outputs.epoch }}
-          BINARY_PACKAGES: ocis-web-app-${{ steps.version.outputs.pkg }}
+          BINARY_PACKAGES: "ocis-web-app-${{ steps.version.outputs.pkg }} ${{ steps.gencontrol.outputs.pkg }}"
         run: |
           cp -a ../debian ./
           dpkg-buildpackage -v${{ steps.version.outputs.src_ver }}-1 -us -uc -Zgzip

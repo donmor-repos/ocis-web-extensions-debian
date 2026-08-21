@@ -1,0 +1,21 @@
+make ocis-ai-llm-proxy executable
+--- a/packages/ai-llm-proxy/src/index.ts
++++ b/packages/ai-llm-proxy/src/index.ts
+@@ -1,3 +1,5 @@
++#!/usr/bin/env node
++
+ import http from 'node:http'
+ 
+ // ---------------------------------------------------------------------------
+--- a/packages/ai-llm-proxy/package.json
++++ b/packages/ai-llm-proxy/package.json
+@@ -6,7 +6,7 @@
+   "license": "Apache-2.0",
+   "type": "module",
+   "scripts": {
+-    "build": "tsc",
++    "build": "tsc && mv dist/index.js dist/ocis-ai-llm-proxy",
+     "dev": "node --watch dist/index.js",
+     "start": "node dist/index.js",
+     "test:unit": "vitest run",
+

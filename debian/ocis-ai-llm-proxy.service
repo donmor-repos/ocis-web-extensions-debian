@@ -1,0 +1,33 @@
+[Unit]
+Description=Server-side proxy for the AI Document Summary extension
+After=syslog.target network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/ocis.env
+ExecStart=/usr/bin/ocis-ai-llm-proxy
+
+# Sandboxing
+DynamicUser=yes
+ProtectProc=invisible
+ProtectHome=yes
+PrivateDevices=yes
+PrivateIPC=yes
+PrivateUsers=yes
+ProtectHostname=yes
+ProtectClock=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictSUIDSGID=yes
+NoNewPrivileges=yes
+SystemCallArchitectures=native
+
+TimeoutStopSec=120
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target ocis.service

@@ -20,7 +20,7 @@ export PATH := $(PATH):$(NODE_PATH)/node_modules/.bin
 	dh $@
 
 override_dh_auto_clean:
-	rm -rf node_modules packages/*/node_modules packages/*/dist $(NODE_PATH)
+	rm -rf .pnpm-store node_modules packages/*/node_modules  packages/*/dist $(NODE_PATH)
 
 override_dh_auto_build:
 	pnpm $(PNPM_FILTER) install --frozen-lockfile

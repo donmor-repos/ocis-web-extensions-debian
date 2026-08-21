@@ -10,6 +10,11 @@ Homepage: https://github.com/owncloud/web-extensions
 #Vcs-Browser: https://salsa.debian.org/debian/web-extensions
 #Vcs-Git: https://salsa.debian.org/debian/web-extensions.git
 
+Package: ocis-ai-llm-proxy
+Architecture: all
+Depends: ocis, nodejs
+Description: Server-side proxy for the AI Document Summary extension — validates oCIS auth and forwards requests to the configured LLM
+
 Package: ocis-web-app-external-sites
 Architecture: all
 Depends: ocis
@@ -57,27 +62,27 @@ Description: Advanced search extension for ownCloud with photo EXIF metadata fil
 
 Package: ocis-web-app-ai-doc-summary
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: AI Document Summarizer Sidebar - sidebarPanel + quick-action extension
 
 Package: ocis-web-app-chat-with-file
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: Chat with an LLM using a specific file as context.
 
 Package: ocis-web-app-ai-image-alt-text-sidebar
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: AI Image Alt-Text Generator — sidebarPanel + context-action extension
 
 Package: ocis-web-app-ai-folder-brief-sidebar
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: AI Folder Brief Sidebar — sidebarPanel extension that summarises folder contents
 
 Package: ocis-web-app-ai-sensitive-data-scanner
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: AI Sensitive Data Scanner (Batch) — batch-action extension for scanning files for PII, credentials, and confidential text
 
 Package: ocis-web-app-file-comments
@@ -92,6 +97,6 @@ Description: Group management full-app extension for ownCloud Web
 
 Package: ocis-web-app-ai-data-insights-sidebar
 Architecture: all
-Depends: ocis
+Depends: ocis, ocis-ai-llm-proxy
 Description: CANDIDATE
 
